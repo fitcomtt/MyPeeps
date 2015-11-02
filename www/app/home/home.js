@@ -4,6 +4,8 @@
 import {NgFor} from 'angular2/angular2';
 import {Page,Modal,NavController} from 'ionic/ionic';
 import {Core} from '../services/core';
+import {addModal} from '../modal/add';
+
 
 @Page({
     templateUrl: 'app/home/home.html',
@@ -12,34 +14,23 @@ import {Core} from '../services/core';
 
 export class HomeCmp {
     self;
-
-    constructor(core:Core,modal:Modal,nav:NavController) {
+    constructor(core:Core, modal:Modal, nav:NavController) {
         this.core = core;
         self = this;
         this.modal = modal;
         this.nav = nav;
         this.core.getAllPeeps()
             .then((docs) => {
-                console.log(docs)
-            })
-            .catch((err) => {
-                console.log(err)
-            })
+            console.log(docs)
+    })
+.catch((err) => {
+    console.log(err)
+})
+}
 
-    }
-
-    addPeep() {
-self.modal.open(addModal);
-    }
-
+addPeep(){
+    this.modal.open(addModal);
 }
 
 
-@Page({
-    templateUrl:'./app/modal/add.html'
-})
-class addModal extends Modal{
-    constructor(){
-
-    }
 }
