@@ -1,0 +1,25 @@
+<ion-toolbar>
+    <ion-toolbar-title>
+        Add Peeps
+    </ion-toolbar-title>
+</ion-toolbar>
+<ion-pane>
+    <ion-content padding>
+
+        <ion-list>
+
+            <ion-input floating-label>
+                <ion-label>Username</ion-label>
+                <input type="text" value="">
+            </ion-input>
+
+            <ion-input floating-label>
+                <ion-label>Password</ion-label>
+                <input type="password" value="">
+            </ion-input>
+
+        </ion-list>
+        <button primary (click)="close()">Add</button>
+        <button primary (click)="close()">Close</button>
+    </ion-content>
+</ion-pane>

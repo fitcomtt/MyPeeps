@@ -1,40 +1,49 @@
 /**
  * Created by osei on 11/1/15.
  */
+let db = new PouchDB('mypeeps');
 
+export class Core {
 
-var db = new PouchDB('mypeeps');
-
-export class Core{
-
-
-    constructor(){
+    constructor() {
 
     }
 
-    peeps:any[] = [];
+    peeps = [];
 
-    getAllDocs(){
-        return new Promise(function (resolve,reject) {
+
+    getAllPeeps(){
+      return new Promise((resolve,reject) => {
             db.allDocs()
-                .then(function (docs) {
+                .then((docs) => {
                     resolve(docs)
                 })
-                .catch(function (err) {
+                .catch((err)=>{
                     reject(err)
                 })
         })
     }
-    getDoc(id){
-        return new Promise(function (resolve,reject) {
+    getPeep(id) {
+       return new Promise((resolve,reject)=>{
             db.get(id)
-                .then(function (doc) {
-                    resolve(doc)
+                .then((docs) => {
+                    resolve(docs)
                 })
-                .catch(function (err) {
+                .catch((err)=>{
                     reject(err)
                 })
+        })
+    }
+
+    addPeep(peep) {
+
+    }
+
+    editPeep(id) {
+      return  new Promise((resolve,reject)=>{
+            db.put()
         })
     }
 
 }
+

@@ -3,7 +3,8 @@ import {HomeCmp} from './home/home';
 import {Core} from './services/core';
 
 @App({
-  template: '<ion-nav [root]="root"></ion-nav>',
+  template: '<ion-nav [root]="root"></ion-nav>' +
+  '<ion-overlay></ion-overlay>',
   providers:[Core]
 })
 

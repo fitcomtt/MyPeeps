@@ -9462,7 +9462,7 @@
 	        });
 	    };
 	    AppCmp = __decorate([ionic_1.App({
-	        template: '<ion-nav [root]="root"></ion-nav>',
+	        template: '<ion-nav [root]="root"></ion-nav>' + '<ion-overlay></ion-overlay>',
 	        providers: [core_1.Core]
 	    }), __metadata('design:paramtypes', [typeof ionic_1.Platform !== 'undefined' && ionic_1.Platform || Object])], AppCmp);
 	    return AppCmp;
@@ -73422,6 +73422,14 @@
 
 	"use strict";
 
+	var __extends = undefined && undefined.__extends || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() {
+	        this.constructor = d;
+	    }
+	    __.prototype = b.prototype;
+	    d.prototype = new __();
+	};
 	var __decorate = undefined && undefined.__decorate || function (decorators, target, key, desc) {
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") return Reflect.decorate(decorators, target, key, desc);
 	    switch (arguments.length) {
@@ -73442,28 +73450,42 @@
 	var __metadata = undefined && undefined.__metadata || function (k, v) {
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
+	/**
+	 * Created by osei on 11/1/15.
+	 */
+	var angular2_1 = __webpack_require__(48);
 	var ionic_1 = __webpack_require__(43);
 	var core_1 = __webpack_require__(518);
 	var HomeCmp = (function () {
-	    function HomeCmp(core) {
+	    function HomeCmp(core, modal, nav) {
 	        this.core = core;
-	        console.log(core);
-	    }
-	    HomeCmp.prototype.addPeep = function () {
-	        this.core.getAllDocs().then(function (docs) {
-	            console.log(this);
-	            //  this.core.peeps.push(docs);
-	            // console.log(this.core.peeps)
+	        self = this;
+	        this.modal = modal;
+	        this.nav = nav;
+	        this.core.getAllPeeps().then(function (docs) {
+	            console.log(docs);
 	        })["catch"](function (err) {
 	            console.log(err);
 	        });
+	    }
+	    HomeCmp.prototype.addPeep = function () {
+	        self.modal.open(addModal);
 	    };
 	    HomeCmp = __decorate([ionic_1.Page({
-	        templateUrl: 'app/home/home.html'
-	    }), __metadata('design:paramtypes', [typeof core_1.Core !== 'undefined' && core_1.Core || Object])], HomeCmp);
+	        templateUrl: 'app/home/home.html',
+	        directives: [angular2_1.NgFor]
+	    }), __metadata('design:paramtypes', [typeof core_1.Core !== 'undefined' && core_1.Core || Object, typeof ionic_1.Modal !== 'undefined' && ionic_1.Modal || Object, typeof ionic_1.NavController !== 'undefined' && ionic_1.NavController || Object])], HomeCmp);
 	    return HomeCmp;
 	})();
 	exports.HomeCmp = HomeCmp;
+	var addModal = (function (_super) {
+	    __extends(addModal, _super);
+	    function addModal() {}
+	    addModal = __decorate([ionic_1.Page({
+	        templateUrl: './app/modal/add.html'
+	    }), __metadata('design:paramtypes', [])], addModal);
+	    return addModal;
+	})(ionic_1.Modal);
 	//# sourceMappingURL=home.js.map
 
 /***/ },
@@ -73480,7 +73502,7 @@
 	    function Core() {
 	        this.peeps = [];
 	    }
-	    Core.prototype.getAllDocs = function () {
+	    Core.prototype.getAllPeeps = function () {
 	        return new Promise(function (resolve, reject) {
 	            db.allDocs().then(function (docs) {
 	                resolve(docs);
@@ -73489,13 +73511,19 @@
 	            });
 	        });
 	    };
-	    Core.prototype.getDoc = function (id) {
+	    Core.prototype.getPeep = function (id) {
 	        return new Promise(function (resolve, reject) {
-	            db.get(id).then(function (doc) {
-	                resolve(doc);
+	            db.get(id).then(function (docs) {
+	                resolve(docs);
 	            })['catch'](function (err) {
 	                reject(err);
 	            });
+	        });
+	    };
+	    Core.prototype.addPeep = function (peep) {};
+	    Core.prototype.editPeep = function (id) {
+	        return new Promise(function (resolve, reject) {
+	            db.put();
 	        });
 	    };
 	    return Core;
