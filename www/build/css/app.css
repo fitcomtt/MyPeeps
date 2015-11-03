@@ -7116,3 +7116,7 @@ icon,
 
 .md {
   font-family: "Roboto", "Helvetica Neue", sans-serif; }
+
+.add-avatar {
+  display: block;
+  margin: 0 auto; }

@@ -1,5 +1,5 @@
 import {App, Platform, StatusBar} from 'ionic/ionic';
-import {HomeCmp} from './home/home';
+import {List} from './list/list';
 import {Core} from './services/core';
 
 @App({
@@ -12,7 +12,7 @@ export class AppCmp {
   constructor(platform: Platform) {
     this.platform = platform;
     this.initializeApp();
-    this.root = HomeCmp;
+    this.root = List;
   }
 
   initializeApp() {

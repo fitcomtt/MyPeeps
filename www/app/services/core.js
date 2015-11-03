@@ -1,22 +1,21 @@
 /**
  * Created by osei on 11/1/15.
  */
-let db = new PouchDB('mypeeps');
+let db = new PouchDB('peeps',{});
 
 export class Core {
 
     constructor() {
-
     }
 
     peeps = [];
-
+itemOpened = {};
 
     getAllPeeps(){
       return new Promise((resolve,reject) => {
-            db.allDocs()
+            db.allDocs({include_docs:true,attachments:true})
                 .then((docs) => {
-                    resolve(docs)
+                    resolve(docs.rows)
                 })
                 .catch((err)=>{
                     reject(err)
@@ -25,7 +24,7 @@ export class Core {
     }
     getPeep(id) {
        return new Promise((resolve,reject)=>{
-            db.get(id)
+            db.get(id,{attachments:true})
                 .then((docs) => {
                     resolve(docs)
                 })
@@ -35,13 +34,41 @@ export class Core {
         })
     }
 
-    addPeep(peep) {
-
+    addPeep(data,image,type) {
+    var peep = data;
+    peep._attachments = {};
+    peep._attachments.avatar = {
+        "content_type":type,
+            "data":image
+    };
+    return  new Promise((resolve,reject)=>{
+            db.post(peep)
+            .then((doc)=>{
+            resolve(doc)
+        })
+            .catch((err)=>{
+        reject(err)
+    })
+})
     }
 
-    editPeep(id) {
+    editPeep(doc) {
       return  new Promise((resolve,reject)=>{
-            db.put()
+              db.get(doc._id)
+              .then((success)=>{
+              doc._rev = success._rev
+              db.put(doc)
+              .then((success) => {
+              resolve(success)
+          })
+    .catch((err)=>{
+            reject(err)
+        })
+          })
+              .catch((err)=>{
+            reject(err)
+        })
+
         })
     }
 

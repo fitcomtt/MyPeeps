@@ -8,21 +8,37 @@
         </ion-title>
     </ion-toolbar>
     <ion-content>
-        <form (ng-submit)="addContact()" novalidate>
+        <form #f="form" (ng-submit)="addContact(f)" novalidate>
+
             <ion-list >
+                <img src="app/assets/images/no_image.jpg" (click)="getImage()" class="add-avatar">
+                <input type="file" ng-control="file" [(ng-model)]="file" id="file" hidden>
                 <ion-input floating-label>
-                    <ion-label>Full Name</ion-label>
-                    <input type="text" [(ng-model)]="fn">
+                    <ion-label>First Name</ion-label>
+                    <input type="text" ng-control="fn" [(ng-model)]="peep.fn" required>
+                </ion-input>
+
+                <ion-input floating-label>
+                    <ion-label>Last Name</ion-label>
+                    <input type="text" ng-control="ln" [(ng-model)]="peep.ln" required>
                 </ion-input>
 
                 <ion-input floating-label>
                     <ion-label>Email</ion-label>
-                    <input type="email" [(ng-model)]="email">
+                    <input type="email" ng-control="email" [(ng-model)]="peep.email">
                 </ion-input>
 
+                <ion-input floating-label>
+                    <ion-label>Office</ion-label>
+                    <input type="number" ng-control="office" [(ng-model)]="peep.office">
+                </ion-input>
+
+                <ion-input floating-label>
+                    <ion-label>Cell</ion-label>
+                    <input type="number" ng-control="cell" [(ng-model)]="peep.cell">
+                </ion-input>
             </ion-list>
-            <button primary block type="submit">Add</button>
-            <button primary block (click)="close()">Close</button>
+            <button primary block type="submit" [disabled]="!f.valid">Add</button>
         </form>
 
     </ion-content>
