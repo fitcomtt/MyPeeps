@@ -1,0 +1,38 @@
+<ion-toolbar primary>
+    <ion-nav-items primary>
+        <button (click)="back()">
+        <icon arrow-back></icon>
+            Back
+        </button>
+    </ion-nav-items>
+    <ion-title>
+        {{item.doc.fn+' '+item.doc.ln}}
+    </ion-title>
+    <ion-nav-items secondary>
+        <button (click)="edit()">Edit</button>
+    </ion-nav-items>
+</ion-toolbar>
+<ion-content>
+    <ion-card>
+        <img [src]="'data:'+item.doc._attachments.avatar.content_type+';base64,'+item.doc._attachments.avatar.data">
+        <ion-card-header>
+            {{item.doc.fn+' '+item.doc.ln}}
+        </ion-card-header>
+
+        <a ion-item href="tel:{{item.doc.office}}" *ng-if="item.doc.office">
+            <icon call item-left></icon>
+            <h2>Office</h2>
+            {{item.doc.office}}
+        </a>
+        <a ion-item href="tel:{{item.doc.cell}}" *ng-if="item.doc.cell">
+            <icon phone-portrait item-left></icon>
+            <h2>Cell</h2>
+            {{item.doc.cell}}
+        </a>
+        <a ion-item href="mailto:{{item.doc.email}}" *ng-if="item.doc.email">
+            <icon mail item-left></icon>
+            {{item.doc.email}}
+        </a>
+
+    </ion-card>
+</ion-content>
