@@ -7120,3 +7120,8 @@ icon,
 .add-avatar {
   display: block;
   margin: 0 auto; }
+
+.edit-avatar {
+  display: block;
+  max-width: 100%;
+  margin: 0 auto; }

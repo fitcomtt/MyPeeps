@@ -8,6 +8,7 @@ export class Core {
     constructor() {
     }
 
+    db = db;
     peeps = [];
 itemOpened = {};
 
@@ -70,6 +71,18 @@ itemOpened = {};
         })
 
         })
+    }
+    deletePeep(doc){
+        return new Promise((resolve,reject)=>{
+                db.remove(doc)
+                .then((success)=>{
+                resolve(success)
+            })
+                .catch((err)=>{
+            reject(err)
+        })
+
+            })
     }
 
 }

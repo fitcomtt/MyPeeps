@@ -73449,33 +73449,48 @@
 	var ionic_1 = __webpack_require__(43);
 	var core_1 = __webpack_require__(518);
 	var add_1 = __webpack_require__(519);
-	var peep_1 = __webpack_require__(520);
+	var view_1 = __webpack_require__(520);
 	var List = (function () {
-	    function List(core, modal, nav) {
-	        var _this = this;
+	    function List(core, nav, popup) {
 	        this.core = core;
 	        self = this;
-	        this.modal = modal;
 	        this.nav = nav;
 	        this.peeps = core.peeps;
+	        this.popup = popup;
 	        this.core.getAllPeeps().then(function (docs) {
 	            core.peeps = docs;
-	            _this.peeps = core.peeps;
 	        })["catch"](function (err) {
 	            console.log(err);
 	        });
 	    }
 	    List.prototype.addPeep = function () {
-	        this.modal.open(add_1.addModal);
+	        this.nav.push(add_1.addPeep);
 	    };
-	    List.prototype.viewPeep = function (index) {
-	        this.nav.push(peep_1.Peep, { id: index });
+	    List.prototype.viewPeep = function (index, doc) {
+	        this.nav.push(view_1.viewPeep, { id: index, item: doc });
 	    };
-	    List.prototype.deletePeep = function (id, index, event) {};
+	    List.prototype.deletePeep = function (doc, index, event) {
+	        event.preventDefault();
+	        event.stopPropagation();
+	        this.popup.confirm({
+	            title: 'Delete' + ' ' + doc.fn + ' ' + doc.ln,
+	            subTitle: 'Are you sure?',
+	            cancelText: 'Cancel',
+	            okText: 'Ok'
+	        }).then(function () {
+	            self.core.deletePeep(doc).then(function (success) {
+	                self.core.peeps.splice(index, 1);
+	            })["catch"](function (err) {});
+	        }, function () {
+	            //cancelled
+	        })["catch"](function (err) {
+	            console.log(err);
+	        });
+	    };
 	    List = __decorate([ionic_1.Page({
 	        templateUrl: 'app/list/list.html',
 	        directives: [angular2_1.NgFor]
-	    }), __metadata('design:paramtypes', [typeof core_1.Core !== 'undefined' && core_1.Core || Object, typeof ionic_1.Modal !== 'undefined' && ionic_1.Modal || Object, typeof ionic_1.NavController !== 'undefined' && ionic_1.NavController || Object])], List);
+	    }), __metadata('design:paramtypes', [typeof core_1.Core !== 'undefined' && core_1.Core || Object, typeof ionic_1.NavController !== 'undefined' && ionic_1.NavController || Object, typeof ionic_1.Popup !== 'undefined' && ionic_1.Popup || Object])], List);
 	    return List;
 	})();
 	exports.List = List;
@@ -73493,6 +73508,7 @@
 	var db = new PouchDB('peeps', {});
 	var Core = (function () {
 	    function Core() {
+	        this.db = db;
 	        this.peeps = [];
 	        this.itemOpened = {};
 	    }
@@ -73543,6 +73559,15 @@
 	            });
 	        });
 	    };
+	    Core.prototype.deletePeep = function (doc) {
+	        return new Promise(function (resolve, reject) {
+	            db.remove(doc).then(function (success) {
+	                resolve(success);
+	            })["catch"](function (err) {
+	                reject(err);
+	            });
+	        });
+	    };
 	    return Core;
 	})();
 	exports.Core = Core;
@@ -73579,13 +73604,25 @@
 	 */
 	var ionic_1 = __webpack_require__(43);
 	var core_1 = __webpack_require__(518);
-	var addModal = (function () {
-	    function addModal(core) {
+	var list_1 = __webpack_require__(517);
+	var addPeep = (function () {
+	    function addPeep(core, nav) {
 	        this.peep = {};
 	        this.core = core;
+	        this.nav = nav;
 	        self = this;
+	        var avatar = document.getElementById('avatar');
+	        document.getElementById('file').onchange = function () {
+	            if (document.getElementById('file').files[0]) {
+	                var reader = new FileReader();
+	                reader.onloadend = function () {
+	                    avatar.src = reader.result;
+	                };
+	                reader.readAsDataURL(document.getElementById('file').files[0]);
+	            }
+	        };
 	    }
-	    addModal.prototype.addContact = function (form) {
+	    addPeep.prototype.addContact = function (form) {
 	        if (this.file) {
 	            var file = document.getElementById('file').files[0];
 	            var reader = new FileReader();
@@ -73594,8 +73631,14 @@
 	                var data = form.value;
 	                delete data.file;
 	                self.core.addPeep(data, base64, file.type).then(function (success) {
-	                    self.core.peeps.push(success);
-	                    console.log(self.core.peeps);
+	                    self.core.getPeep(success.id).then(function (doc) {
+	                        var item = {};
+	                        item.doc = doc;
+	                        self.core.peeps.push(item);
+	                        self.nav.push(list_1.List);
+	                    })["catch"](function (err) {
+	                        console.log(err);
+	                    });
 	                })["catch"](function (err) {
 	                    console.log(err);
 	                });
@@ -73613,8 +73656,14 @@
 	                var data = form.value;
 	                delete data.file;
 	                self.core.addPeep(data, base64, 'image/jpeg').then(function (success) {
-	                    self.core.peeps.push(success);
-	                    console.log(self.core.peeps);
+	                    self.core.getPeep(success.id).then(function (doc) {
+	                        var item = {};
+	                        item.doc = doc;
+	                        self.core.peeps.push(item);
+	                        self.nav.push(list_1.List);
+	                    })["catch"](function (err) {
+	                        console.log(err);
+	                    });
 	                })["catch"](function (err) {
 	                    console.log(err);
 	                });
@@ -73622,15 +73671,18 @@
 	            image.src = 'app/assets/images/no_image.jpg';
 	        }
 	    };
-	    addModal.prototype.getImage = function () {
+	    addPeep.prototype.getImage = function () {
 	        document.getElementById('file').click();
 	    };
-	    addModal = __decorate([ionic_1.Page({
-	        templateUrl: 'app/modal/add.html'
-	    }), __metadata('design:paramtypes', [typeof core_1.Core !== 'undefined' && core_1.Core || Object])], addModal);
-	    return addModal;
+	    addPeep.prototype.goBack = function () {
+	        this.nav.push(list_1.List);
+	    };
+	    addPeep = __decorate([ionic_1.Page({
+	        templateUrl: 'app/peep/add/add.html'
+	    }), __metadata('design:paramtypes', [typeof core_1.Core !== 'undefined' && core_1.Core || Object, typeof ionic_1.NavController !== 'undefined' && ionic_1.NavController || Object])], addPeep);
+	    return addPeep;
 	})();
-	exports.addModal = addModal;
+	exports.addPeep = addPeep;
 	//# sourceMappingURL=add.js.map
 
 /***/ },
@@ -73665,26 +73717,30 @@
 	var ionic_1 = __webpack_require__(43);
 	var edit_1 = __webpack_require__(521);
 	var core_1 = __webpack_require__(518);
-	var Peep = (function () {
-	    function Peep(nav, params, modal, core) {
+	var list_1 = __webpack_require__(517);
+	var viewPeep = (function () {
+	    function viewPeep(nav, params, core) {
 	        this.nav = nav;
 	        this.params = params;
 	        this.core = core_1.Core;
-	        //this.item = this.params['data'].item;
-	        this.modal = modal;
-	        this.item = core.peeps[this.params.data.id];
-	        //   console.log(this.item)
+	        self = this;
+	        //this.item = core.peeps[this.params.data.id];
+	        this.item = this.params.data.item;
+	        console.log(this.item);
 	    }
-	    Peep.prototype.edit = function () {
-	        this.modal.open(edit_1.editModal, { data: this.params['data'].id });
+	    viewPeep.prototype.edit = function () {
+	        this.nav.push(edit_1.editPeep, { item: this.params['data'].item, id: this.params['data'].id });
 	    };
-	    Peep = __decorate([ionic_1.Page({
-	        templateUrl: 'app/peep/peep.html'
-	    }), __metadata('design:paramtypes', [typeof ionic_1.NavController !== 'undefined' && ionic_1.NavController || Object, typeof ionic_1.NavParams !== 'undefined' && ionic_1.NavParams || Object, typeof ionic_1.Modal !== 'undefined' && ionic_1.Modal || Object, typeof core_1.Core !== 'undefined' && core_1.Core || Object])], Peep);
-	    return Peep;
+	    viewPeep.prototype.back = function () {
+	        this.nav.push(list_1.List);
+	    };
+	    viewPeep = __decorate([ionic_1.Page({
+	        templateUrl: 'app/peep/view/view.html'
+	    }), __metadata('design:paramtypes', [typeof ionic_1.NavController !== 'undefined' && ionic_1.NavController || Object, typeof ionic_1.NavParams !== 'undefined' && ionic_1.NavParams || Object, typeof core_1.Core !== 'undefined' && core_1.Core || Object])], viewPeep);
+	    return viewPeep;
 	})();
-	exports.Peep = Peep;
-	//# sourceMappingURL=peep.js.map
+	exports.viewPeep = viewPeep;
+	//# sourceMappingURL=view.js.map
 
 /***/ },
 /* 521 */
@@ -73720,14 +73776,27 @@
 	 */
 	var ionic_1 = __webpack_require__(43);
 	var core_1 = __webpack_require__(518);
-	var editModal = (function () {
-	    function editModal(core, modal) {
+	var view_1 = __webpack_require__(520);
+	var editPeep = (function () {
+	    function editPeep(core, nav, params) {
 	        this.core = core;
 	        self = this;
-	        this.modal = modal;
-	        this.peep = core.peeps[self.modal._defaults.data].doc;
+	        this.nav = nav;
+	        this.params = params;
+	        // this.peep = core.peeps[this.params.data.id].doc;
+	        this.peep = this.params.data.item.doc;
+	        var avatar = document.getElementsByClassName('edit-avatar');
+	        document.getElementById('file').onchange = function () {
+	            if (document.getElementById('file').files[0]) {
+	                var reader = new FileReader();
+	                reader.onloadend = function () {
+	                    avatar[0].src = reader.result;
+	                };
+	                reader.readAsDataURL(document.getElementById('file').files[0]);
+	            }
+	        };
 	    }
-	    editModal.prototype.editContact = function (form) {
+	    editPeep.prototype.editContact = function (form) {
 	        if (this.file) {
 	            var file = document.getElementById('file').files[0];
 	            var reader = new FileReader();
@@ -73760,18 +73829,20 @@
 	            });
 	        }
 	    };
-	    editModal.prototype.getImage = function () {
+	    editPeep.prototype.getImage = function () {
 	        document.getElementById('file').click();
 	    };
-	    editModal.prototype.done = function () {
-	        this.close();
+	    editPeep.prototype.done = function () {
+	        var data = {};
+	        data.doc = this.peep;
+	        this.nav.push(view_1.viewPeep, { item: data });
 	    };
-	    editModal = __decorate([ionic_1.Page({
-	        templateUrl: 'app/modal/edit.html'
-	    }), __metadata('design:paramtypes', [typeof core_1.Core !== 'undefined' && core_1.Core || Object, typeof ionic_1.Modal !== 'undefined' && ionic_1.Modal || Object])], editModal);
-	    return editModal;
+	    editPeep = __decorate([ionic_1.Page({
+	        templateUrl: 'app/peep/edit/edit.html'
+	    }), __metadata('design:paramtypes', [typeof core_1.Core !== 'undefined' && core_1.Core || Object, typeof ionic_1.NavController !== 'undefined' && ionic_1.NavController || Object, typeof ionic_1.NavParams !== 'undefined' && ionic_1.NavParams || Object])], editPeep);
+	    return editPeep;
 	})();
-	exports.editModal = editModal;
+	exports.editPeep = editPeep;
 	//# sourceMappingURL=edit.js.map
 
 /***/ }

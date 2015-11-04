@@ -1,30 +1,30 @@
 /**
  * Created by osei on 11/1/15.
  */
-import {NgFor} from 'angular2/angular2';
-import {Page,Modal,NavController} from 'ionic/ionic';
+import {NgFor,Pipe,PipeTransform} from 'angular2/angular2';
+import {Page,NavController,Popup} from 'ionic/ionic';
 import {Core} from '../services/core';
-import {addModal} from '../modal/add';
-import {Peep} from '../peep/peep';
+import {addPeep} from '../peep/add/add';
+import {viewPeep} from '../peep/view/view';
+import {editPeep} from '../peep/edit/edit'
 
 @Page({
     templateUrl: 'app/list/list.html',
-    directives: [NgFor]
+    directives: [NgFor],
 })
 
 export class List {
     self;
-
-    constructor(core:Core, modal:Modal, nav:NavController) {
+    constructor(core:Core, nav:NavController,popup:Popup) {
         this.core = core;
         self = this;
-        this.modal = modal;
         this.nav = nav;
         this.peeps = core.peeps;
+        this.popup = popup;
         this.core.getAllPeeps()
             .then((docs) => {
             core.peeps = docs;
-        this.peeps = core.peeps;
+
     })
 .catch((err) => {
     console.log(err)
@@ -32,12 +32,33 @@ export class List {
 }
 
 addPeep(){
-    this.modal.open(addModal);
+    this.nav.push(addPeep)
 }
-viewPeep(index){
-   this.nav.push(Peep,{id:index})
+viewPeep(index,doc){
+   this.nav.push(viewPeep,{id:index,item:doc})
 }
-    deletePeep(id,index,event){
+    deletePeep(doc,index,event){
+        event.preventDefault();
+        event.stopPropagation();
+        this.popup.confirm({
+            title: 'Delete'+' '+doc.fn+' '+doc.ln,
+            subTitle: 'Are you sure?',
+            cancelText: 'Cancel',
+            okText: 'Ok',
 
+        }).then(()=>{
+            self.core.deletePeep(doc)
+            .then((success)=>{
+          self.core.peeps.splice(index,1)
+    })
+    .catch((err)=>{
+
+        })
+        },()=>{
+//cancelled
+        })
+        .catch((err)=>{
+            console.log(err)
+        })
     }
 }

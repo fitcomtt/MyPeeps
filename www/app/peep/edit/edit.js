@@ -4,20 +4,35 @@
 /**
  * Created by osei on 11/1/15.
  */
-import {Modal,Page} from 'ionic/ionic';
+import {Page,NavController,NavParams} from 'ionic/ionic';
 import {FORM_DIRECTIVES} from 'angular2/angular2';
-import {Core} from '../services/core';
+import {Core} from '../../services/core';
+import {viewPeep} from '../../peep/view/view';
 
 @Page({
-    templateUrl: 'app/modal/edit.html'
+    templateUrl: 'app/peep/edit/edit.html'
 })
-export class editModal  {
+export class editPeep  {
     self;
-    constructor(core:Core,modal:Modal){
+    constructor(core:Core,nav:NavController,params:NavParams){
         this.core = core;
         self = this;
-        this.modal = modal;
-        this.peep = core.peeps[self.modal._defaults.data].doc;
+        this.nav = nav;
+        this.params = params;
+      // this.peep = core.peeps[this.params.data.id].doc;
+        this.peep = this.params.data.item.doc;
+        let avatar = document.getElementsByClassName('edit-avatar');
+
+        document.getElementById('file').onchange = function () {
+            if (document.getElementById('file').files[0]){
+                let reader = new FileReader();
+
+                reader.onloadend = function () {
+                   avatar[0].src = reader.result;
+                };
+                reader.readAsDataURL(document.getElementById('file').files[0])
+            }
+        }
     }
 
     file:any;
@@ -67,6 +82,8 @@ getImage(){
     document.getElementById('file').click();
 }
 done(){
-    this.close();
+    var data = {};
+    data.doc = this.peep;
+    this.nav.push(viewPeep,{item:data});
 }
 }

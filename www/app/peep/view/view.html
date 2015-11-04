@@ -1,11 +1,17 @@
-<ion-navbar *navbar>
+<ion-toolbar primary>
+    <ion-nav-items primary>
+        <button (click)="back()">
+        <icon arrow-back></icon>
+            Back
+        </button>
+    </ion-nav-items>
     <ion-title>
         {{item.doc.fn+' '+item.doc.ln}}
     </ion-title>
     <ion-nav-items secondary>
         <button (click)="edit()">Edit</button>
     </ion-nav-items>
-</ion-navbar>
+</ion-toolbar>
 <ion-content>
     <ion-card>
         <img [src]="'data:'+item.doc._attachments.avatar.content_type+';base64,'+item.doc._attachments.avatar.data">

@@ -1,26 +1,25 @@
-<ion-navbar *navbar>
-  <ion-title>
-    MyPeeps
-  </ion-title>
-  <ion-nav-items secondary>
-      <button (click)="addPeep()">
-          <icon add></icon>
-      </button>
-  </ion-nav-items>
-
-</ion-navbar>
+<ion-toolbar primary>
+    <ion-title>
+        MyPeeps
+    </ion-title>
+    <ion-nav-items secondary>
+        <button (click)="addPeep()">
+            <icon add></icon>
+        </button>
+    </ion-nav-items>
+</ion-toolbar>
 
 <ion-content>
 
  <ion-list>
-     <ion-item *ng-for="#item of peeps;#i = index" (click)="viewPeep(i)" >
+     <ion-item *ng-for="#item of core.peeps;#i = index " (click)="viewPeep(i,item)"  >
          <ion-avatar item-left>
              <img [src]="'data:'+item.doc._attachments.avatar.content_type+';base64,'+item.doc._attachments.avatar.data">
          </ion-avatar>
 <ion-item-content>
     <h2>{{item.doc.fn +" "+item.doc.ln}}</h2>
 </ion-item-content>
-         <button clear item-right (click)="deletePeep(item.doc._id,i,$event)">
+         <button clear item-right (click)="deletePeep(item.doc,i,$event)">
              Delete
          </button>
      </ion-item>
