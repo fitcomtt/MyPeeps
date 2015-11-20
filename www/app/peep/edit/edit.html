@@ -12,11 +12,10 @@
 </ion-toolbar>
 
 <ion-content>
-    <form #f="form" (ng-submit)="editContact(f)" novalidate>
-
-        <ion-list >
+    <ion-list >
+    <form #f="form" novalidate>
             <!--<img src="app/assets/images/no_image.jpg" (click)="getImage()" class="add-avatar" *ng-if="!peep._attachments" id="avatar">-->
-            <img [src]="'data:'+peep._attachments.avatar.content_type+';base64,'+peep._attachments.avatar.data"  (click)="getImage()" *ng-if="peep._attachments" class="edit-avatar">
+            <img [src]="'data:'+peep._attachments.avatar.content_type+';base64,'+peep._attachments.avatar.data"  (click)="getImage()" *ng-if="peep._attachments" id="edit-avatar">
             <input type="file" ng-control="file" [(ng-model)]="file" id="file" hidden>
             <ion-input floating-label>
                 <ion-label>First Name</ion-label>
@@ -42,8 +41,8 @@
                 <ion-label>Cell</ion-label>
                 <input type="number" ng-control="cell" [(ng-model)]="peep.cell" value="{{peep.cell}}">
             </ion-input>
-        </ion-list>
-        <button primary block type="submit" [disabled]="!f.valid">Update</button>
-    </form>
 
+        <button primary block [disabled]="!f.valid" (click)="editContact(f)">Update</button>
+    </form>
+    </ion-list>
 </ion-content>

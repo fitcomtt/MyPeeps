@@ -1,4 +1,4 @@
-<ion-pane>
+
     <ion-toolbar primary>
         <ion-nav-items primary>
             <button (click)="goBack()">Cancel</button>
@@ -8,10 +8,11 @@
         </ion-title>
     </ion-toolbar>
     <ion-content>
-        <form #f="form" (ng-submit)="addContact(f)" novalidate>
-            <img src="app/assets/images/no_image.jpg" (click)="getImage()" class="add-avatar" id="avatar">
-            <input type="file" ng-control="file" [(ng-model)]="file" id="file" hidden>
+        <form #f="form" novalidate>
+
             <ion-list >
+                <img src="app/assets/images/no_image.jpg" (click)="getImage()" class="add-avatar" id="avatar">
+                <input type="file" ng-control="file" [(ng-model)]="file" id="file" hidden (change)="fileChanged($event)">
 
                 <ion-input floating-label>
                     <ion-label>First Name</ion-label>
@@ -38,8 +39,6 @@
                     <input type="number" ng-control="cell" [(ng-model)]="peep.cell">
                 </ion-input>
             </ion-list>
-            <button primary block type="submit" [disabled]="!f.valid">Add</button>
+            <button primary block (click)="addContact(f)" [disabled]="!f.valid">Add</button>
         </form>
-
     </ion-content>
-</ion-pane>

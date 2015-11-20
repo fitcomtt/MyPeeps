@@ -14,7 +14,7 @@
  <ion-list>
      <ion-item *ng-for="#item of core.peeps;#i = index " (click)="viewPeep(i,item)"  >
          <ion-avatar item-left>
-             <img [src]="'data:'+item.doc._attachments.avatar.content_type+';base64,'+item.doc._attachments.avatar.data">
+             <img [src]="'data:'+item.doc._attachments.avatar.content_type+';base64,'+item.doc._attachments.avatar.data" width="100" height="100">
          </ion-avatar>
 <ion-item-content>
     <h2>{{item.doc.fn +" "+item.doc.ln}}</h2>

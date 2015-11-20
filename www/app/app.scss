@@ -20,9 +20,12 @@ $colors: (primary: #387ef5, secondary: #32db64, danger: #f53d3d, light: #f4f4f4,
 .add-avatar{
   display: block;
   margin: 0 auto;
+  max-width: 100%;
+  height: 50vh;
 }
-.edit-avatar{
+#edit-avatar{
   display: block;
   max-width: 100%;
+  height: 50vh;
   margin: 0 auto;
 }

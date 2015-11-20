@@ -21,14 +21,13 @@ export class editPeep  {
         this.params = params;
       // this.peep = core.peeps[this.params.data.id].doc;
         this.peep = this.params.data.item.doc;
-        let avatar = document.getElementsByClassName('edit-avatar');
 
         document.getElementById('file').onchange = function () {
             if (document.getElementById('file').files[0]){
                 let reader = new FileReader();
 
                 reader.onloadend = function () {
-                   avatar[0].src = reader.result;
+                    document.getElementById('edit-avatar').src = reader.result;
                 };
                 reader.readAsDataURL(document.getElementById('file').files[0])
             }
@@ -37,44 +36,50 @@ export class editPeep  {
 
     file:any;
     editContact(form) {
-        if(this.file){
-            var file  = document.getElementById('file').files[0];
 
-            var reader = new FileReader();
-            reader.onloadend = function () {
-                var base64 = reader.result.replace('data:'+file.type+';base64,','');
-                var data = form.value;
+        if( form.form.valid){
+            if(this.file){
+                var file  = document.getElementById('file').files[0];
+
+                var reader = new FileReader();
+                reader.onloadend = function () {
+                    var base64 = reader.result.replace('data:'+file.type+';base64,','');
+                    var data = form.form.value;
+                    delete data.file;
+                    data._id = self.peep._id;
+                    data._attachments = {};
+                    data._attachments.avatar = {
+                        "content_type":file.type,
+                        "data":base64
+                    };
+
+                    self.core.editPeep(data)
+                        .then((success)=>{
+                        self.peep = data;
+                    self.done();
+                })
+                    .catch((err)=>{
+                        console.log(err)
+                })
+                };
+                reader.readAsDataURL(file)
+            }else{
+                var data = form.form.value;
                 delete data.file;
                 data._id = self.peep._id;
-                data._attachments = {};
-                data._attachments.avatar = {
-                    "content_type":file.type,
-                    "data":base64
-                };
-
+                data._attachments = self.peep._attachments;
                 self.core.editPeep(data)
                     .then((success)=>{
-                self.peep = data
+                    self.peep = data;
+                self.done();
             })
-        .catch((err)=>{
-                console.log(err)
-        })
-    };
-    reader.readAsDataURL(file)
-}else{
-        var data = form.value;
-        delete data.file;
-            data._id = self.peep._id;
-            data._attachments = self.peep._attachments;
-            self.core.editPeep(data)
-            .then((success)=>{
-                self.peep = data
-    })
-.catch((err)=>{
-        console.log(err)
-})
+            .catch((err)=>{
+                    console.log(err)
+            })
 
-}
+            }
+        }
+
 
 }
 
@@ -84,6 +89,7 @@ getImage(){
 done(){
     var data = {};
     data.doc = this.peep;
-    this.nav.push(viewPeep,{item:data});
+    this.nav.pop();
+    //this.nav.push(viewPeep,{item:data});
 }
 }

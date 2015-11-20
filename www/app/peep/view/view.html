@@ -6,7 +6,7 @@
         </button>
     </ion-nav-items>
     <ion-title>
-        {{item.doc.fn+' '+item.doc.ln}}
+        {{item.fn+' '+item.ln}}
     </ion-title>
     <ion-nav-items secondary>
         <button (click)="edit()">Edit</button>
@@ -14,24 +14,24 @@
 </ion-toolbar>
 <ion-content>
     <ion-card>
-        <img [src]="'data:'+item.doc._attachments.avatar.content_type+';base64,'+item.doc._attachments.avatar.data">
+        <img [src]="'data:'+item._attachments.avatar.content_type+';base64,'+item._attachments.avatar.data" id="avatar">
         <ion-card-header>
-            {{item.doc.fn+' '+item.doc.ln}}
+            {{item.fn+' '+item.ln}}
         </ion-card-header>
 
-        <a ion-item href="tel:{{item.doc.office}}" *ng-if="item.doc.office">
+        <a ion-item href="tel:{{item.office}}" *ng-if="item.office">
             <icon call item-left></icon>
             <h2>Office</h2>
-            {{item.doc.office}}
+            {{item.office}}
         </a>
-        <a ion-item href="tel:{{item.doc.cell}}" *ng-if="item.doc.cell">
+        <a ion-item href="tel:{{item.cell}}" *ng-if="item.cell">
             <icon phone-portrait item-left></icon>
             <h2>Cell</h2>
-            {{item.doc.cell}}
+            {{item.cell}}
         </a>
-        <a ion-item href="mailto:{{item.doc.email}}" *ng-if="item.doc.email">
+        <a ion-item href="mailto:{{item.email}}" *ng-if="item.email">
             <icon mail item-left></icon>
-            {{item.doc.email}}
+            {{item.email}}
         </a>
 
     </ion-card>
